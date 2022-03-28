@@ -1,4 +1,3 @@
-
 <template>
     <div class="home"
          v-loading="loading"
