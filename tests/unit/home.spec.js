@@ -3,24 +3,22 @@ import Vue from 'vue'
 global.Vue = Vue;
 console.log('--global:',global.hasOwnProperty('Vue'))
 Vue.config.productionTip = false
-
-// use the compoment from elementui
 import ElementUI from 'element-ui';
-
-// import 'element-ui/lib/theme-chalk/index.css';
 Vue.use(ElementUI);
 
-import { mount, createLocalVue } from '@vue/test-utils'
+import { mount, createLocalVue, shallowMount } from '@vue/test-utils'
 import Home from '@/views/Home.vue'
-import { Button } from 'element-ui'
-
+import { Button, RadioGroup } from 'element-ui'
 const localVue = createLocalVue()
 localVue.component(Button.name, Button)
 localVue.use(ElementUI)
-const wrapper = mount(Home, { localVue })
+const wrapper = mount(Home, {
+  localVue
+})
 
 describe('Home.vue', () => {
   const vm = wrapper.vm;
+  // 测试在创建的生命周期中调用方法
   it('Calling a method in the created lifecycle', () => {
     const getList = jest.fn()
     const options = {
@@ -29,16 +27,28 @@ describe('Home.vue', () => {
     mount(Home, options)
     expect(getList).toBeCalled()
   })
-  it('Default paging parameter 1', () => {
+  // 传值正确
+  it('pass the value correctly', () => {
     expect(wrapper.vm.$data.page).toBe(1)
   })
+  //渲染正确
+  it('render correctly', () => {
+    wrapper.setProps({
+      userName: 'Zhang San'
+    })
+    expect(wrapper.find('#userName').exists()).toBe(true)
+  })
+  //判断有一个RadioGroup组件
+  it('There is a RadioGroup component', () => {
+    expect(wrapper.contains(RadioGroup)).toBe(true)
+  })
+  //输入框清除按钮点击的时候，页面只执行userNameChange方法
+  it('When the input box clear button is clicked, the page only executes the userNameChange method', () => {
+    wrapper.find("#userName").trigger('clear');
+    expect(wrapper.vm.userNameChange.toBeCalled);
+  })
+  // 测试也是是否含有按钮
   it('has a button', () => {
     expect(wrapper.contains('button')).toBe(true)
   })
-
-  test('triggers a click', async () => {
-    await wrapper.trigger('click')
-  })
-
-
 })

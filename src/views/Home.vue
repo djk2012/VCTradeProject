@@ -6,15 +6,15 @@
         <div class="flex-width-box">
             <div class="user-aside fix-width">
                 <div class="user-search">
-                    <el-input v-model="userName" clearable @clear="userNameChange" @change="userNameChange"
+                    <el-input id="userName" v-model="userName" clearable @clear="userNameChange" @change="userNameChange"
                               placeholder="Please enter name"/>
                     <el-radio-group v-model="gender" @change="genderChange">
                         <el-radio label="male">male</el-radio>
                         <el-radio label="female">female</el-radio>
                     </el-radio-group>
-                    <el-button class="reset-btn" type="primary" @click="reset">reset</el-button>
+                    <el-button class="reset-btn" type="primary" @click="resetForm">reset</el-button>
                 </div>
-                <div class="user-list" @scroll="scroll" ref="infiniteList" style=" overflow-x: hidden;
+                <div class="user-list" @scroll="scroll" v-infinite-scroll="load" ref="infiniteList" style=" overflow-x: hidden;
     overflow-y: auto;">
                     <ul v-if="this.userHistoryList.length > 0" class="infinite-list">
                         <li v-for="(item, index) in userHistoryList" :key="index" class="infinite-item"
@@ -25,7 +25,7 @@
                                 <div class="email">{{ item.email }}</div>
                             </div>
                         </li>
-                        <div class="more" @click="moreData">More results...</div>
+                        <div id="moreJump" class="more" >More results...</div>
                     </ul>
                     <el-empty v-else description="Empty"></el-empty>
                 </div>
@@ -103,11 +103,12 @@ export default {
             this.userList = JSON.parse(list)
             this.userHistoryList = JSON.parse(list);
             this.scrollToBottom();
-        } else {
-            this.getList(1, 25, 'reset');
         }
     },
     methods: {
+        load() {
+            this.moreData();
+        },
         /** get user list */
         getList(page, num, reset) {
             let pageNum = page ? page : this.page;
@@ -144,14 +145,15 @@ export default {
                 console.log(err)
             })
         },
-        /** reset method */
-        reset() {
+        /** resetForm method */
+        resetForm() {
+            this.userHistoryList = [];
             this.userName = '';
             this.gender = '';
             this.page = 1;
             this.pos = 0;
-            this.email = JSON.parse(JSON.stringify(this.userList[0])).email;
-            this.userInfo = JSON.parse(JSON.stringify(this.userList[0]));
+            this.email = '';
+            this.userInfo = null;
             window.localStorage.setItem("page", this.page);
             window.localStorage.setItem("email", this.email);
             window.localStorage.setItem("userInfo", JSON.stringify(this.userList[0]));
