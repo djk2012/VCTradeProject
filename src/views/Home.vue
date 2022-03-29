@@ -14,7 +14,7 @@
                     </el-radio-group>
                     <el-button class="reset-btn" type="primary" @click="resetForm">reset</el-button>
                 </div>
-                <div class="user-list" @scroll="scroll" v-infinite-scroll="load" ref="infiniteList" style=" overflow-x: hidden;
+                <div class="user-list" @scroll="scroll" v-infinite-scroll="load" infinite-scroll-distance="20" infinite-scroll-delay="1000" ref="infiniteList" style=" overflow-x: hidden;
     overflow-y: auto;">
                     <ul v-if="this.userHistoryList.length > 0" class="infinite-list">
                         <li v-for="(item, index) in userHistoryList" :key="index" class="infinite-item"
@@ -25,7 +25,7 @@
                                 <div class="email">{{ item.email }}</div>
                             </div>
                         </li>
-                        <div id="moreJump" class="more" >More results...</div>
+                        <div id="moreJump" class="more">More results...</div>
                     </ul>
                     <el-empty v-else description="Empty"></el-empty>
                 </div>
